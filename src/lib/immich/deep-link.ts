@@ -9,7 +9,7 @@ function isAndroid(): boolean {
 export function immichAssetHref(assetId: string, webUrl: string): string {
   if (!isAndroid()) return webUrl;
   return (
-    `intent://asset/${assetId}#Intent;scheme=immich;` +
+    `intent://asset?id=${assetId}#Intent;scheme=immich;` +
     `package=${IMMICH_ANDROID_PACKAGE};` +
     `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
   );
