@@ -1,6 +1,4 @@
 import { countBy, groupBy, sortBy, sum, uniq } from "lodash-es";
-import type { Observation, ObservationSummary } from "@/lib/inat/observations";
-import { formatDate } from "@/lib/days";
 import { taxonLabel } from "./taxonLabels";
 import {
   observationsUrl,
@@ -8,6 +6,8 @@ import {
   type ChartTaxon,
 } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
+import { formatDate } from "@/lib/days";
+import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { paletteColor } from "@/components/charts/palette";
 
 /** day -> iconicTaxon -> species first observed that day for that taxon */

@@ -1,13 +1,13 @@
 import { groupBy, orderBy, uniqBy } from "lodash-es";
-import type { Observation, ObservationSummary } from "@/lib/inat/observations";
-import { speciesName } from "@/lib/inat/observations";
-import { formatDate } from "@/lib/days";
 import {
   observationsUrl,
   taxonObservationsUrl,
   type ChartTaxon,
 } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
+import type { Observation, ObservationSummary } from "@/lib/inat/observations";
+import { speciesName } from "@/lib/inat/observations";
+import { formatDate } from "@/lib/days";
 
 /** date -> speciesName -> commonName */
 export type SpeciesByDay = Map<string, Map<string, string>>;

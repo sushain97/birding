@@ -1,8 +1,8 @@
 import { orderBy, sortBy } from "lodash-es";
+import type { ChartTaxon } from "./taxonLinks";
 import type { ObservationSummary } from "@/lib/inat/observations";
 import { speciesName } from "@/lib/inat/observations";
 import { formatDate } from "@/lib/days";
-import type { ChartTaxon } from "./taxonLinks";
 
 export interface NeedsIdBestDaySpecies extends ChartTaxon {
   starred: boolean;

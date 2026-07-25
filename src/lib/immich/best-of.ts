@@ -1,9 +1,9 @@
+import { immichClient } from "./client";
+import { BEST_OF_CLASSES, type BestOfClass } from "./best-of-classes";
 import Config from "@/lib/config";
 import { inatClient } from "@/lib/inat/client";
 import type { ObservationSummary } from "@/lib/inat/observations";
 import { speciesName } from "@/lib/inat/observations";
-import { immichClient } from "./client";
-import { BEST_OF_CLASSES, type BestOfClass } from "./best-of-classes";
 
 const COMMON_NAME_OVERRIDES: Record<string, string> = {
   "Cairina moschata": "Muscovy Duck",

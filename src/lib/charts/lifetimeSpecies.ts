@@ -1,11 +1,11 @@
 import { countBy, groupBy, sortBy, sum } from "lodash-es";
+import { taxonLabel } from "./taxonLabels";
+import { taxonObservationsUrl, type ChartTaxon } from "./taxonLinks";
+import type { BarChartFigure } from "./types";
 import type {
   ObservationTaxon,
   ObservationSummary,
 } from "@/lib/inat/observations";
-import { taxonLabel } from "./taxonLabels";
-import { taxonObservationsUrl, type ChartTaxon } from "./taxonLinks";
-import type { BarChartFigure } from "./types";
 
 function countByIconicTaxon(
   taxons: ObservationTaxon[],

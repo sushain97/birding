@@ -2,9 +2,9 @@ import { mkdir, readFile, writeFile, rename, stat } from "node:fs/promises";
 import path from "node:path";
 import { flatMap } from "lodash-es";
 import superjson from "superjson";
+import Config from "./config";
 import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import type { BestOfSummary } from "@/lib/immich/best-of";
-import Config from "./config";
 
 export interface ObservationsSnapshot {
   summary: ObservationSummary;

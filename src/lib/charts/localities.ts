@@ -1,5 +1,4 @@
 import { countBy, groupBy, sortBy, sum } from "lodash-es";
-import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { taxonLabel } from "./taxonLabels";
 import {
   observationsUrl,
@@ -7,6 +6,7 @@ import {
   type ChartTaxon,
 } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
+import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { paletteColor } from "@/components/charts/palette";
 
 function countryFlag(displayName: string): string {

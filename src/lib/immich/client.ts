@@ -1,3 +1,5 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import {
   AssetMediaSize,
   getAlbumInfo,
@@ -7,8 +9,6 @@ import {
   init,
   viewAsset,
 } from "@immich/sdk";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
 import Config from "@/lib/config";
 
 init({ baseUrl: `${Config.immichBaseUrl}/api`, apiKey: Config.immichApiKey });

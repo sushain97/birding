@@ -4,12 +4,12 @@ import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { Stack, TextInput } from "@mantine/core";
+import { PhotoDialog } from "./PhotoDialog";
 import type { BestOfRow } from "@/lib/immich/best-of";
 import {
   BEST_OF_CLASSES,
   type BestOfClass,
 } from "@/lib/immich/best-of-classes";
-import { PhotoDialog } from "./PhotoDialog";
 
 const SPECIES_PARAM = "species";
 

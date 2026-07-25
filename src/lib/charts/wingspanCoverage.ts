@@ -1,8 +1,8 @@
 import { countBy, groupBy, keyBy, sortBy, sumBy } from "lodash-es";
-import type { ObservationSummary } from "@/lib/inat/observations";
-import { getWingspanBirdsBySet, type WingspanBird } from "@/lib/wingspan";
 import { taxonObservationsUrl, type ChartTaxon } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
+import type { ObservationSummary } from "@/lib/inat/observations";
+import { getWingspanBirdsBySet, type WingspanBird } from "@/lib/wingspan";
 
 type Category = "Research Grade" | "Needs ID" | "Missing";
 const CATEGORIES: Category[] = ["Research Grade", "Needs ID", "Missing"];

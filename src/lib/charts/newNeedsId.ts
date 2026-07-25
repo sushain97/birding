@@ -1,12 +1,12 @@
 import { groupBy, orderBy, uniq } from "lodash-es";
-import type { ObservationSummary } from "@/lib/inat/observations";
-import { speciesName } from "@/lib/inat/observations";
 import { iconicTaxonEmoji } from "./taxonLabels";
 import {
   taxonObservationsUrl,
   taxonPageUrl,
   type ChartTaxon,
 } from "./taxonLinks";
+import type { ObservationSummary } from "@/lib/inat/observations";
+import { speciesName } from "@/lib/inat/observations";
 
 export interface NewNeedsIdDate {
   date: string;

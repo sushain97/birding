@@ -9,7 +9,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     plugins: { prettier: prettierPlugin },
-    rules: { "prettier/prettier": "error" },
+    rules: { "prettier/prettier": "error", "import/order": "error" },
   },
   // Must come after other configs to disable conflicting stylistic rules.
   prettierConfig,

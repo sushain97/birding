@@ -1,7 +1,7 @@
 import { groupBy, sortBy } from "lodash-es";
-import type { ObservationSummary } from "@/lib/inat/observations";
 import { taxonObservationsUrl } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
+import type { ObservationSummary } from "@/lib/inat/observations";
 
 export function buildMostSeenFigure(
   summary: ObservationSummary,
