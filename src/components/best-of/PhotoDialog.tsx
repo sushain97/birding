@@ -14,6 +14,7 @@ import {
   BEST_OF_CLASSES,
   type BestOfClass,
 } from "@/lib/immich/best-of-classes";
+import { immichAssetHref } from "@/lib/immich/deep-link";
 
 const CLASS_LABELS: Partial<Record<BestOfClass, string>> = {
   Male: "Male (♂)",
@@ -83,7 +84,10 @@ export function PhotoDialog({
               {speciesPhotos[klass]!.map((assetId) => (
                 <Anchor
                   key={assetId}
-                  href={`${immichBaseUrl}/photos/${assetId}`}
+                  href={immichAssetHref(
+                    assetId,
+                    `${immichBaseUrl}/photos/${assetId}`,
+                  )}
                   target="_blank"
                 >
                   <Thumbnail assetId={assetId} alt={`${name} photo`} />

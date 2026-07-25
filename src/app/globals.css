@@ -13,6 +13,7 @@ body {
   outline: none;
 }
 
-.recharts-wrapper:has(.recharts-rectangle:hover) .recharts-rectangle:not(:hover) {
+.recharts-wrapper:has(.recharts-rectangle:hover)
+  .recharts-rectangle:not(:hover) {
   fill-opacity: 0.55;
 }
