@@ -3,13 +3,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
-import { Stack, TextInput } from "@mantine/core";
+import { Anchor, Stack, TextInput } from "@mantine/core";
 import { PhotoDialog } from "./PhotoDialog";
 import type { BestOfRow } from "@/lib/immich/best-of";
 import {
   BEST_OF_CLASSES,
   type BestOfClass,
 } from "@/lib/immich/best-of-classes";
+import { observationsUrl } from "@/lib/charts/taxonLinks";
 
 const SPECIES_PARAM = "species";
 
@@ -100,7 +101,25 @@ export function BestOfTable({ rows, photos, immichBaseUrl }: BestOfTableProps) {
         highlightOnHover
         minHeight={300}
         columns={[
-          { accessor: "name", title: "Scientific Name", sortable: true },
+          {
+            accessor: "name",
+            title: "Scientific Name",
+            sortable: true,
+            render: (row: BestOfRow) => (
+              <Anchor
+                href={observationsUrl({
+                  taxonId: row.taxonId,
+                  qualityGrade: "research",
+                })}
+                target="_blank"
+                underline="never"
+                onClick={(e) => e.stopPropagation()}
+                style={{ fontSize: "inherit" }}
+              >
+                {row.name}
+              </Anchor>
+            ),
+          },
           { accessor: "commonName", title: "Common Name", sortable: true },
           ...BEST_OF_CLASSES.map((klass) => ({
             accessor: klass,

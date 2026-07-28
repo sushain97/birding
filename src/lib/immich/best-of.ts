@@ -27,6 +27,7 @@ const MISSING_SPECIES_SINCE = "2025-10-08";
 export interface BestOfSummary {
   photos: Record<string, Partial<Record<BestOfClass, string[]>>>;
   speciesByName: Record<string, string>;
+  taxonIdByName: Record<string, number>;
   missingSpecies: Set<string>;
   warnings: string[];
 }
@@ -50,14 +51,15 @@ export async function computeBestOfSummary(
     await inatClient.fetchTaxonCommonNames(subspeciesParentIds);
 
   const speciesByName: Record<string, string> = {};
+  const taxonIdByName: Record<string, number> = {};
   for (const obs of allObservations) {
-    if (!obs.taxon?.name) continue;
     const name = speciesName(obs.taxon.name);
     const commonName =
       obs.taxon.rank === "subspecies" && obs.taxon.parent_id !== undefined
         ? parentCommonNames.get(obs.taxon.parent_id)
         : obs.taxon.preferred_common_name;
     if (commonName) speciesByName[name] = commonName;
+    taxonIdByName[name] ??= obs.taxon.id;
   }
   Object.assign(speciesByName, COMMON_NAME_OVERRIDES);
 
@@ -66,7 +68,7 @@ export async function computeBestOfSummary(
       .filter(
         (obs) =>
           obs.quality_grade === "research" &&
-          obs.taxon?.name &&
+          obs.taxon.name &&
           !EXCLUDED_ICONIC_TAXA.has(obs.taxon.iconic_taxon_name ?? "") &&
           !(obs.taxon.ancestor_ids ?? []).includes(ARTHROPODA_TAXON_ID) &&
           (obs.observed_on ?? "") >= MISSING_SPECIES_SINCE,
@@ -113,12 +115,13 @@ export async function computeBestOfSummary(
     missingSpecies.delete(name);
   }
 
-  return { photos, speciesByName, missingSpecies, warnings };
+  return { photos, speciesByName, taxonIdByName, missingSpecies, warnings };
 }
 
 export interface BestOfRow {
   name: string;
   commonName: string;
+  taxonId: number;
   counts: Partial<Record<BestOfClass, number>>;
   total: number;
 }
@@ -136,6 +139,7 @@ export function buildBestOfRows(bestOf: BestOfSummary): BestOfRow[] {
       return {
         name,
         commonName: bestOf.speciesByName[name] ?? "",
+        taxonId: bestOf.taxonIdByName[name],
         counts,
         total,
       };
@@ -146,6 +150,7 @@ export function buildBestOfRows(bestOf: BestOfSummary): BestOfRow[] {
     rows.push({
       name,
       commonName: bestOf.speciesByName[name] ?? "",
+      taxonId: bestOf.taxonIdByName[name],
       counts: {},
       total: 0,
     });
