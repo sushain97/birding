@@ -42,11 +42,9 @@ export async function computeBestOfSummary(
   ];
 
   const subspeciesParentIds = allObservations
-    .filter(
-      (obs) =>
-        obs.taxon?.rank === "subspecies" && obs.taxon.parent_id !== undefined,
-    )
-    .map((obs) => obs.taxon!.parent_id!);
+    .filter((obs) => obs.taxon.rank === "subspecies")
+    .map((obs) => obs.taxon.parent_id)
+    .filter((parentId) => parentId !== undefined);
   const parentCommonNames =
     await inatClient.fetchTaxonCommonNames(subspeciesParentIds);
 
@@ -69,11 +67,11 @@ export async function computeBestOfSummary(
         (obs) =>
           obs.quality_grade === "research" &&
           obs.taxon.name &&
-          !EXCLUDED_ICONIC_TAXA.has(obs.taxon.iconic_taxon_name ?? "") &&
+          !EXCLUDED_ICONIC_TAXA.has(obs.taxon.iconic_taxon_name) &&
           !(obs.taxon.ancestor_ids ?? []).includes(ARTHROPODA_TAXON_ID) &&
-          (obs.observed_on ?? "") >= MISSING_SPECIES_SINCE,
+          obs.observed_on >= MISSING_SPECIES_SINCE,
       )
-      .map((obs) => speciesName(obs.taxon!.name!)),
+      .map((obs) => speciesName(obs.taxon.name)),
   );
 
   const assets = await immichClient.getAlbumAssets(albumId);

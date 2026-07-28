@@ -22,11 +22,11 @@ async function main() {
         `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
       );
     }
-    const data = await response.json();
+    const data: unknown = await response.json();
     const outputPath = path.join(import.meta.dirname, "..", "data", filename);
     await writeFile(outputPath, `${JSON.stringify(data, null, 2)}\n`);
     console.log(`Wrote ${outputPath}`);
   }
 }
 
-main();
+void main();

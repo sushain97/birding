@@ -27,7 +27,7 @@ export function NeedsIdBestDaysList({ rows }: { rows: NeedsIdBestDay[] }) {
                     target="_blank"
                     underline="never"
                   >
-                    {s.preferred_common_name || s.name}
+                    {s.preferred_common_name ?? s.name}
                   </Anchor>
                   {s.starred ? " ⭐" : ""}
                 </li>

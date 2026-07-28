@@ -15,8 +15,8 @@ function localityPlaceIds(summary: ObservationSummary): number[] {
   return [
     ...new Set(
       summary.firstResearchObservations
-        .filter((obs) => obs.place_ids && obs.place_ids.length > 1)
-        .map((obs) => obs.place_ids![1]),
+        .filter((obs) => obs.place_ids.length > 1)
+        .map((obs) => obs.place_ids[1]),
     ),
   ];
 }

@@ -5,30 +5,43 @@ const BEST_OF_INTERVAL_MS = 15 * 60 * 1000; // every 15 minutes
 
 let started = false;
 
-export async function startScheduler(): Promise<void> {
+async function runInitialRefresh(): Promise<void> {
+  try {
+    await refreshObservations();
+    console.log("Initial observations refresh done");
+    await refreshBestOf();
+    console.log("Initial best-of refresh done");
+  } catch (err) {
+    console.error("Initial refresh failed", err);
+  }
+}
+
+async function runObservationsRefresh(): Promise<void> {
+  try {
+    await refreshObservations();
+    console.log("Observations refresh done");
+  } catch (err) {
+    console.error("Observations refresh failed", err);
+  }
+}
+
+async function runBestOfRefresh(): Promise<void> {
+  try {
+    await refreshBestOf();
+    console.log("Best-of refresh done");
+  } catch (err) {
+    console.error("Best-of refresh failed", err);
+  }
+}
+
+export function startScheduler(): void {
   // Idempotent — guards against double-start (e.g. dev-mode module
   // re-evaluation).
   if (started) return;
   started = true;
 
-  void refreshObservations()
-    .then(() => console.log("Initial observations refresh done"))
-    .then(refreshBestOf)
-    .then(() => console.log("Initial best-of refresh done"))
-    .catch((err) => console.error("Initial refresh failed", err));
+  void runInitialRefresh();
 
-  setInterval(
-    () =>
-      void refreshObservations()
-        .then(() => console.log("Observations refresh done"))
-        .catch((err) => console.error("Observations refresh failed", err)),
-    OBSERVATIONS_INTERVAL_MS,
-  );
-  setInterval(
-    () =>
-      void refreshBestOf()
-        .then(() => console.log("Best-of refresh done"))
-        .catch((err) => console.error("Best-of refresh failed", err)),
-    BEST_OF_INTERVAL_MS,
-  );
+  setInterval(() => void runObservationsRefresh(), OBSERVATIONS_INTERVAL_MS);
+  setInterval(() => void runBestOfRefresh(), BEST_OF_INTERVAL_MS);
 }

@@ -27,7 +27,7 @@ export function buildWingspanCoverageFigure(summary: ObservationSummary): {
   const taxonByName = keyBy(
     [...summary.needsIdTaxons, ...summary.researchGradeTaxons],
     "name",
-  );
+  ) as Partial<Record<string, ChartTaxon>>;
 
   const rgSpecies = new Set(summary.researchGradeTaxons.map((t) => t.name));
   const needsIdSpecies = new Set(summary.needsIdTaxons.map((t) => t.name));

@@ -75,7 +75,7 @@ class ImmichClient {
         path.join(TAG_CACHE_DIR, `${assetId}.json`),
         "utf-8",
       );
-      const tags: string[] = JSON.parse(raw);
+      const tags = JSON.parse(raw) as string[];
       return tags.length > 0 ? tags : null;
     } catch {
       return null;

@@ -33,7 +33,7 @@ export function needsIdBestDaysRows(
   return orderBy(eligible, ([day]) => day, "desc").map(([day, species]) => {
     const sorted = sortBy(
       species,
-      (s) => s.preferred_common_name || s.name || "",
+      (s) => s.preferred_common_name ?? s.name ?? "",
     );
     return {
       day,

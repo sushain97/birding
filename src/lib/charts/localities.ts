@@ -12,7 +12,7 @@ import { paletteColor } from "@/components/charts/palette";
 function countryFlag(displayName: string): string {
   const code = displayName.split(",").pop()?.trim() ?? "";
   if (code.length === 2 && /^[A-Z]{2}$/.test(code)) {
-    return [...code]
+    return Array.from(code)
       .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
       .join("");
   }

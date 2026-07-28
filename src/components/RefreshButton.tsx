@@ -23,7 +23,7 @@ export function RefreshButton() {
     <Button
       variant="light"
       loading={isRefreshing || isPending}
-      onClick={handleClick}
+      onClick={() => void handleClick()}
     >
       ↺ Refresh
     </Button>

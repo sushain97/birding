@@ -39,12 +39,10 @@ async function main() {
   const inatTaxons = new Map(
     summary.researchGradeTaxons
       .filter((t) => t.iconic_taxon_name === "Aves" && t.name)
-      .map((t) => [speciesName(t.name!), t.preferred_common_name ?? ""]),
+      .map((t) => [speciesName(t.name), t.preferred_common_name ?? ""]),
   );
   const inatNeedsIdTaxons = new Set(
-    summary.needsIdTaxons
-      .filter((t) => t.name)
-      .map((t) => speciesName(t.name!)),
+    summary.needsIdTaxons.filter((t) => t.name).map((t) => speciesName(t.name)),
   );
 
   for (const [name, commonName] of ebirdTaxons) {
@@ -60,4 +58,4 @@ async function main() {
   }
 }
 
-main();
+void main();

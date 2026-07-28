@@ -18,9 +18,9 @@ async function main() {
       `Failed to fetch ${SPEC_URL}: ${response.status} ${response.statusText}`,
     );
   }
-  const spec = await response.json();
+  const spec: unknown = await response.json();
   await writeFile(OUTPUT_PATH, `${JSON.stringify(spec, null, 2)}\n`);
   console.log(`Wrote ${OUTPUT_PATH}`);
 }
 
-main();
+void main();

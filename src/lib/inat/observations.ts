@@ -27,7 +27,7 @@ export type Observation = Required<
 > & { taxon: ObservationTaxon };
 
 function trimObservation(raw: RawObservation): Observation | undefined {
-  const t = raw.taxon as RawObservationTaxon | undefined;
+  const t: RawObservationTaxon | undefined = raw.taxon;
   if (
     !raw.quality_grade ||
     !raw.observed_on ||

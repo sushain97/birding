@@ -101,7 +101,7 @@ export function buildTopDaysFigure(summary: ObservationSummary): {
     yAxisWidth: 340,
   };
 
-  const bestDaysNeedsId: Map<string, ChartTaxon[]> = new Map(
+  const bestDaysNeedsId = new Map<string, ChartTaxon[]>(
     bestDays.map(({ day }) => [day, needsIdTaxaByDay.get(day) ?? []]),
   );
 

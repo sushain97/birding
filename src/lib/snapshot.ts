@@ -42,7 +42,7 @@ function cachedFileReader<T>(filePath: string): () => Promise<T | null> {
       return null;
     }
 
-    if (!cache || cache.mtimeMs !== mtimeMs) {
+    if (cache?.mtimeMs !== mtimeMs) {
       const raw = await readFile(filePath, "utf-8");
       cache = { mtimeMs, data: superjson.parse<T>(raw) };
     }
@@ -76,7 +76,7 @@ export async function isKnownBestOfAsset(assetId: string): Promise<boolean> {
   if (assetIdCache?.snapshot !== snapshot) {
     const ids = new Set(
       flatMap(Object.values(snapshot.photos), (classes) =>
-        flatMap(Object.values(classes), (assetIds) => assetIds ?? []),
+        flatMap(Object.values(classes)),
       ),
     );
     assetIdCache = { snapshot, ids };

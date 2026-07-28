@@ -11,7 +11,7 @@ function isPrivateIp(ip: string): boolean {
         addr.isLoopback() ||
         addr.isLinkLocal() ||
         addr.isULA() ||
-        (v4 !== null && v4.isPrivate())
+        (v4?.isPrivate() ?? false)
       );
     }
     const addr = new Address4(ip);
@@ -25,7 +25,7 @@ function clientIp(request: NextRequest): string | null {
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (!forwardedFor) return null;
   const parts = forwardedFor.split(",").map((part) => part.trim());
-  return parts.at(-1) || null;
+  return parts.at(-1) ?? null;
 }
 
 let refreshInFlight = false;

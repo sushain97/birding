@@ -66,7 +66,7 @@ class InatClient {
       });
       if (error) throw new Error(`Failed to fetch taxa ${chunk.join(",")}`);
 
-      for (const taxon of data.results ?? []) {
+      for (const taxon of data.results) {
         if (taxon.id !== undefined && taxon.preferred_common_name) {
           result.set(taxon.id, taxon.preferred_common_name);
         }
@@ -89,7 +89,7 @@ class InatClient {
         params: { path: { id: chunk.map(String) } },
       });
       if (error) throw new Error(`Failed to fetch places ${chunk.join(",")}`);
-      for (const place of data.results ?? []) {
+      for (const place of data.results) {
         if (place.id !== undefined && place.display_name) {
           result.set(place.id, place.display_name);
         }
