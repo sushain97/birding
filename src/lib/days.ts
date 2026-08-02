@@ -18,6 +18,7 @@ export const LABELED_DATES: Record<string, string> = {
   "2026-05-09": "Ocean Beach + GGP",
   "2026-05-10": "Point Reyes",
   "2026-05-30": "Coyote Hills",
+  "2026-08-01": "Spreckles Ave. Pond + New Chicago Marsh",
 };
 
 export function formatDate(date: string): string {
