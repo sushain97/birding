@@ -23,7 +23,7 @@ jobs:
       - uses: docker/metadata-action@v6
         id: meta
         with:
-          images: ghcr.io/sushain97/inat-graphs
+          images: ghcr.io/sushain97/birding
           tags: type=sha,prefix=
 
       - uses: docker/setup-buildx-action@v4
