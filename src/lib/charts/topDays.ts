@@ -7,7 +7,7 @@ import {
 import type { BarChartFigure } from "./types";
 import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { speciesName } from "@/lib/inat/observations";
-import { formatDate } from "@/lib/days";
+import { formatDate, formatDateLabel } from "@/lib/days";
 
 /** date -> speciesName -> commonName */
 export type SpeciesByDay = Map<string, Map<string, string>>;
@@ -84,6 +84,7 @@ export function buildTopDaysFigure(summary: ObservationSummary): {
   const figure: BarChartFigure = {
     data: bestDays.map((d) => ({
       category: formatDate(d.day),
+      categoryLabel: formatDateLabel(d.day),
       needsId: d.needsId,
       researchGrade: d.rg,
       meta: {
@@ -98,7 +99,7 @@ export function buildTopDaysFigure(summary: ObservationSummary): {
     ],
     mode: "group",
     xLabel: "Species count",
-    yAxisWidth: 340,
+    yAxisWidth: 280,
   };
 
   const bestDaysNeedsId = new Map<string, ChartTaxon[]>(

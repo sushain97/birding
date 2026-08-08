@@ -25,3 +25,9 @@ export function formatDate(date: string): string {
   const label = LABELED_DATES[date];
   return label ? `${date} (${label})` : date;
 }
+
+/** Y-axis tick lines (date, then label) for a labeled date. */
+export function formatDateLabel(date: string): readonly string[] | undefined {
+  const label = LABELED_DATES[date];
+  return label ? [date, label] : undefined;
+}

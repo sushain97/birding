@@ -23,6 +23,8 @@ export interface ChartSeries {
 
 export type ChartRow = {
   category: string;
+  /** Optional Y-axis tick lines to render in place of `category`, one per row. */
+  categoryLabel?: readonly string[];
   /** Per-series metadata (e.g. drilldown data), keyed by series key. */
   meta?: Record<string, unknown>;
   labelUrl?: string;
@@ -36,24 +38,30 @@ export interface ChartClick {
 const AXIS_COLOR = "#c1c2c5";
 const GRID_COLOR = "rgba(255, 255, 255, 0.1)";
 
+const TICK_LINE_HEIGHT = 16;
+
 function YAxisLinkedTick({
   x,
   y,
   payload,
   labelUrls,
+  categoryLabelsByCategory,
 }: {
   x?: number | string;
   y?: number | string;
   payload?: { value: string };
   labelUrls: Map<string, string>;
+  categoryLabelsByCategory: Map<string, readonly string[]>;
 }) {
   const value = payload?.value ?? "";
   const url = labelUrls.get(value);
+  const lines = categoryLabelsByCategory.get(value) ?? [value];
+  const firstDy = 4 - ((lines.length - 1) * TICK_LINE_HEIGHT) / 2;
+
   return (
     <text
       x={x}
       y={y}
-      dy={4}
       textAnchor="end"
       fontSize={14}
       fill={AXIS_COLOR}
@@ -64,7 +72,11 @@ function YAxisLinkedTick({
           : undefined
       }
     >
-      {value}
+      {lines.map((line, i) => (
+        <tspan key={i} x={x} dy={i === 0 ? firstDy : TICK_LINE_HEIGHT}>
+          {line}
+        </tspan>
+      ))}
     </text>
   );
 }
@@ -105,8 +117,24 @@ export function BarChart({
       .map((row) => [row.category, row.labelUrl]),
   );
 
+  const categoryLabelsByCategory = new Map(
+    data
+      .filter(
+        (row): row is ChartRow & { categoryLabel: readonly string[] } =>
+          !!row.categoryLabel,
+      )
+      .map((row) => [row.category, row.categoryLabel]),
+  );
+
+  const hasCustomLabels = categoryLabelsByCategory.size > 0;
   const singleBarPerRow = mode === "stack" || series.length === 1;
-  const rowHeight = singleBarPerRow ? 32 : 48;
+  const rowHeight = singleBarPerRow
+    ? hasCustomLabels
+      ? 44
+      : 32
+    : hasCustomLabels
+      ? 56
+      : 48;
   const chartHeight = Math.max(
     220,
     data.length * rowHeight + (series.length > 1 ? 156 : 106),
@@ -143,7 +171,13 @@ export function BarChart({
           width={yAxisWidth}
           reversed
           stroke={AXIS_COLOR}
-          tick={(props) => <YAxisLinkedTick {...props} labelUrls={labelUrls} />}
+          tick={(props) => (
+            <YAxisLinkedTick
+              {...props}
+              labelUrls={labelUrls}
+              categoryLabelsByCategory={categoryLabelsByCategory}
+            />
+          )}
           tickLine={{ stroke: GRID_COLOR }}
           axisLine={{ stroke: GRID_COLOR }}
         />
@@ -206,6 +240,7 @@ export function BarChart({
               fill={s.color}
               hide={hiddenKeys.has(s.key)}
               stackId={mode === "stack" ? "stack" : undefined}
+              isAnimationActive={false}
               onClick={
                 onBarClick
                   ? (item: BarRectangleItem) =>

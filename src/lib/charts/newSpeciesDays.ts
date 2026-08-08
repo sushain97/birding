@@ -6,7 +6,7 @@ import {
   type ChartTaxon,
 } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
-import { formatDate } from "@/lib/days";
+import { formatDate, formatDateLabel } from "@/lib/days";
 import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { paletteColor } from "@/components/charts/palette";
 
@@ -62,6 +62,7 @@ export function buildNewSpeciesDaysFigure(
   return {
     data: bestDays.map(([day, counts]) => ({
       category: formatDate(day),
+      categoryLabel: formatDateLabel(day),
       ...Object.fromEntries(taxons.map((t) => [t, counts[t] ?? 0])),
       total: sum(Object.values(counts)),
       meta: Object.fromEntries(
@@ -77,6 +78,6 @@ export function buildNewSpeciesDaysFigure(
     mode: "stack",
     xLabel: "New species count",
     totalsKey: "total",
-    yAxisWidth: 320,
+    yAxisWidth: 280,
   };
 }
