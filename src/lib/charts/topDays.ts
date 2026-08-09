@@ -49,10 +49,9 @@ function toSpeciesByDay(taxaByDay: Map<string, ChartTaxon[]>): SpeciesByDay {
   );
 }
 
-export function buildTopDaysFigure(summary: ObservationSummary): {
-  figure: BarChartFigure;
-  bestDaysNeedsId: Map<string, ChartTaxon[]>;
-} {
+export function buildTopDaysFigure(
+  summary: ObservationSummary,
+): BarChartFigure {
   const researchGradeTaxaByDay = taxaMapByDay(
     summary.researchGradeObservations,
     "research",
@@ -102,9 +101,5 @@ export function buildTopDaysFigure(summary: ObservationSummary): {
     yAxisWidth: 280,
   };
 
-  const bestDaysNeedsId = new Map<string, ChartTaxon[]>(
-    bestDays.map(({ day }) => [day, needsIdTaxaByDay.get(day) ?? []]),
-  );
-
-  return { figure, bestDaysNeedsId };
+  return figure;
 }

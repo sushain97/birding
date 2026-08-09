@@ -8,12 +8,10 @@ import { buildNewSpeciesDaysFigure } from "@/lib/charts/newSpeciesDays";
 import { buildLocalitiesFigure } from "@/lib/charts/localities";
 import { buildMostSeenFigure } from "@/lib/charts/mostSeen";
 import { buildWingspanCoverageFigure } from "@/lib/charts/wingspanCoverage";
-import { newNeedsIdRows } from "@/lib/charts/newNeedsId";
-import { needsIdBestDaysRows } from "@/lib/charts/needsIdBestDays";
+import { needsIdByDayRows } from "@/lib/charts/needsIdByDay";
 import { BarChart } from "@/components/charts/BarChart";
 import { BarChartWithSpeciesDialog } from "@/components/charts/BarChartWithSpeciesDialog";
-import { NewNeedsIdTable } from "@/components/NewNeedsIdTable";
-import { NeedsIdBestDaysList } from "@/components/NeedsIdBestDaysList";
+import { NeedsIdByDayList } from "@/components/NeedsIdByDayList";
 
 // Reads the on-disk snapshot the background scheduler keeps refreshing —
 // must never be statically prerendered at build time.
@@ -63,8 +61,6 @@ export default async function InatPage() {
 
   const { summary, placeNames } = observations;
 
-  const { figure: topDaysFigure, bestDaysNeedsId } =
-    buildTopDaysFigure(summary);
   const {
     figure: wingspanFigure,
     totalResearchGrade,
@@ -80,7 +76,7 @@ export default async function InatPage() {
       </Section>
 
       <Section title="Top days by unique species observed">
-        <BarChartWithSpeciesDialog figure={topDaysFigure} />
+        <BarChartWithSpeciesDialog figure={buildTopDaysFigure(summary)} />
       </Section>
 
       <Section title="Top days by new research grade species">
@@ -95,14 +91,8 @@ export default async function InatPage() {
         />
       </Section>
 
-      <Section title="New Needs ID species (last 60 days)">
-        <NewNeedsIdTable rows={newNeedsIdRows(summary)} />
-      </Section>
-
-      <Section title="Needs ID species on best days (last 60 days)">
-        <NeedsIdBestDaysList
-          rows={needsIdBestDaysRows(summary, bestDaysNeedsId)}
-        />
+      <Section title="Needs ID species by day (last 30 days)">
+        <NeedsIdByDayList rows={needsIdByDayRows(summary)} />
       </Section>
 
       <Section title="Most seen research grade species (unique days)">
