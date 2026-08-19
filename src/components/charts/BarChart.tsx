@@ -14,6 +14,7 @@ import {
   YAxis,
   type BarRectangleItem,
 } from "recharts";
+import styles from "./BarChart.module.css";
 
 export interface ChartSeries {
   key: string;
@@ -250,12 +251,53 @@ export function BarChart({
                       })
                   : undefined
               }
-              shape={(shapeProps: BarRectangleItem) => (
-                <Rectangle
-                  {...shapeProps}
-                  cursor={onBarClick ? "pointer" : undefined}
-                />
-              )}
+              shape={(shapeProps: BarRectangleItem) => {
+                const value = (shapeProps.payload as ChartRow | undefined)?.[
+                  s.key
+                ];
+                const label = String(value);
+                const badgeWidth = label.length * 7 + 12;
+                const badgeHeight = 16;
+                const showValue =
+                  mode === "stack" &&
+                  typeof value === "number" &&
+                  value > 0 &&
+                  badgeWidth <= shapeProps.width &&
+                  badgeHeight <= shapeProps.height;
+                const cx = shapeProps.x + shapeProps.width / 2;
+                const cy = shapeProps.y + shapeProps.height / 2;
+                return (
+                  <g
+                    className={mode === "stack" ? styles.barSegment : undefined}
+                  >
+                    <Rectangle
+                      {...shapeProps}
+                      cursor={onBarClick ? "pointer" : undefined}
+                    />
+                    {showValue && (
+                      <g className={styles.barValueLabel}>
+                        <rect
+                          x={cx - badgeWidth / 2}
+                          y={cy - badgeHeight / 2}
+                          width={badgeWidth}
+                          height={badgeHeight}
+                          rx={4}
+                          className={styles.barValueBadge}
+                        />
+                        <text
+                          x={cx}
+                          y={cy}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          className={styles.barValueText}
+                        >
+                          {label}
+                        </text>
+                      </g>
+                    )}
+                  </g>
+                );
+              }}
             >
               {mode === "group" && (
                 <LabelList
