@@ -98,7 +98,7 @@ export function buildTopDaysFigure(
     ],
     mode: "group",
     xLabel: "Species count",
-    yAxisWidth: 280,
+    yAxisWidth: 290,
   };
 
   return figure;
