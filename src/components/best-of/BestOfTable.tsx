@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
+import "mantine-datatable/styles.css";
 import { Anchor, Stack, TextInput } from "@mantine/core";
 import { PhotoDialog } from "./PhotoDialog";
 import type { BestOfRow } from "@/lib/immich/best-of";

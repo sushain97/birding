@@ -5,7 +5,6 @@ import {
   mantineHtmlProps,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
-import "mantine-datatable/styles.css";
 import "./globals.css";
 import { CountryFlagPolyfill } from "@/components/CountryFlagPolyfill";
 

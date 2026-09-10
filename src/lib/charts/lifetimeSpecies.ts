@@ -1,4 +1,4 @@
-import { countBy, groupBy, sortBy, sum } from "lodash-es";
+import { countBy, groupBy, mapValues, sortBy, sum } from "lodash-es";
 import { taxonLabel } from "./taxonLabels";
 import { taxonObservationsUrl, type ChartTaxon } from "./taxonLinks";
 import type { BarChartFigure } from "./types";
@@ -17,12 +17,15 @@ function speciesByIconicTaxon(
   taxons: ObservationTaxon[],
   qualityGrade: "research" | "needs_id",
 ): Record<string, ChartTaxon[]> {
-  return groupBy(
-    taxons.map((t) => ({
-      ...t,
-      observationsUrl: taxonObservationsUrl(t.id, qualityGrade),
-    })),
-    (t) => t.iconic_taxon_name,
+  return mapValues(
+    groupBy(taxons, (t) => t.iconic_taxon_name),
+    (group) =>
+      group.map((t) => ({
+        id: t.id,
+        name: t.name,
+        preferred_common_name: t.preferred_common_name,
+        observationsUrl: taxonObservationsUrl(t.id, qualityGrade),
+      })),
   );
 }
 

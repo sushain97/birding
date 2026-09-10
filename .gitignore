@@ -1,4 +1,5 @@
 .claude
+.git
 node_modules/
 /.next/
 /out/
