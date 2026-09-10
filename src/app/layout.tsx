@@ -7,6 +7,7 @@ import {
 import "@mantine/core/styles.css";
 import "mantine-datatable/styles.css";
 import "./globals.css";
+import { CountryFlagPolyfill } from "@/components/CountryFlagPolyfill";
 
 export const metadata: Metadata = {
   title: "Birding",
@@ -21,6 +22,7 @@ export default function RootLayout({
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
       <body>
+        <CountryFlagPolyfill />
         <MantineProvider defaultColorScheme="dark">{children}</MantineProvider>
       </body>
     </html>
