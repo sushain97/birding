@@ -16,6 +16,17 @@ class InatClient {
     baseUrl: "https://api.inaturalist.org/v1",
   });
 
+  constructor() {
+    this.client.use({
+      onRequest: ({ request }) => {
+        const url = new URL(request.url);
+        url.searchParams.set("locale", "en");
+        url.searchParams.set("preferred_place_id", "1");
+        return new Request(url, request);
+      },
+    });
+  }
+
   readonly GET = this.client.GET.bind(this.client);
 
   private async fetchAllPages<T>(
