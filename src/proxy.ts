@@ -7,8 +7,7 @@ export function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 403 });
   }
 
-  const site = request.headers.get("sec-fetch-site");
-  if (site !== null && site !== "same-origin") {
+  if (request.headers.get("sec-fetch-site") !== "same-origin") {
     return new NextResponse(null, { status: 403 });
   }
 
