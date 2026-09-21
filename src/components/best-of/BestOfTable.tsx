@@ -9,17 +9,17 @@ import { PhotoDialog } from "./PhotoDialog";
 import type { BestOfRow } from "@/lib/immich/best-of";
 import {
   BEST_OF_CLASSES,
+  BEST_OF_CLASS_SYMBOLS,
   type BestOfClass,
 } from "@/lib/immich/best-of-classes";
 import { observationsUrl } from "@/lib/charts/taxonLinks";
 
 const SPECIES_PARAM = "species";
 
-const CLASS_LABELS: Partial<Record<BestOfClass, string>> = {
-  Male: "Male (♂)",
-  Female: "Female (♀)",
-  Immature: "Immature (⚲)",
-};
+function classLabel(klass: BestOfClass): string {
+  const symbol = BEST_OF_CLASS_SYMBOLS[klass];
+  return symbol ? `${klass} (${symbol})` : klass;
+}
 
 export interface BestOfTableProps {
   rows: BestOfRow[];
@@ -124,7 +124,7 @@ export function BestOfTable({ rows, photos, immichBaseUrl }: BestOfTableProps) {
           { accessor: "commonName", title: "Common Name", sortable: true },
           ...BEST_OF_CLASSES.map((klass) => ({
             accessor: klass,
-            title: CLASS_LABELS[klass] ?? klass,
+            title: classLabel(klass),
             textAlign: "right" as const,
             sortable: true,
             render: (row: BestOfRow) => row.counts[klass] ?? "",

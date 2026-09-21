@@ -1,9 +1,8 @@
 /**
- * Deliberately separate file with zero dependencies. Client components
- * (BestOfTable.tsx, PhotoDialog.tsx) need this constant/type at runtime, but
- * must not import it from best-of.ts or client.ts — those pull in
- * `node:fs/promises` and the Immich SDK, which breaks the Next.js client bundle
- * if reached from a "use client" component.
+ * Deliberately separate file with zero dependencies. Client components need
+ * this constant/type at runtime, but must not import it from best-of.ts or
+ * client.ts — those pull in `node:fs/promises` and the Immich SDK, which breaks
+ * the Next.js client bundle if reached from a "use client" component.
  */
 
 export const BEST_OF_CLASSES = [
@@ -15,3 +14,10 @@ export const BEST_OF_CLASSES = [
 ] as const;
 
 export type BestOfClass = (typeof BEST_OF_CLASSES)[number];
+
+/** Symbol appended to a photo's description; classes without one get none. */
+export const BEST_OF_CLASS_SYMBOLS: Partial<Record<BestOfClass, string>> = {
+  Male: "♂",
+  Female: "♀",
+  Immature: "⚲",
+};

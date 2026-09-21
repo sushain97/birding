@@ -2,11 +2,13 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   AssetMediaSize,
+  type AssetResponseDto,
   getAlbumInfo,
   getAssetInfo,
   getTimeBucket,
   getTimeBuckets,
   init,
+  updateAsset,
   viewAsset,
 } from "@immich/sdk";
 import Config from "@/lib/config";
@@ -18,7 +20,12 @@ const TAG_CACHE_DIR = path.join(Config.cacheDir, "immich-tags");
 export interface AlbumAsset {
   id: string;
   fileCreatedAt: string;
+  ownerId: string;
   owner: string;
+}
+
+function withApiKey(apiKey: string) {
+  return { headers: { "x-api-key": apiKey } };
 }
 
 class ImmichClient {
@@ -41,6 +48,7 @@ class ImmichClient {
         assets.push({
           id: bucket.id[i],
           fileCreatedAt: bucket.fileCreatedAt[i],
+          ownerId: bucket.ownerId[i],
           owner: ownerById.get(bucket.ownerId[i]) ?? bucket.ownerId[i],
         });
       }
@@ -49,7 +57,7 @@ class ImmichClient {
     return assets;
   }
 
-  /** Tags never expire once cached, matching the old Python behavior. */
+  /** Tags never expire once cached. */
   async getAssetTags(assetId: string): Promise<string[]> {
     const cached = await this.readTagCache(assetId);
     if (cached) return cached;
@@ -59,6 +67,21 @@ class ImmichClient {
 
     await this.writeTagCache(assetId, tags);
     return tags;
+  }
+
+  async getAsset(assetId: string): Promise<AssetResponseDto> {
+    return await getAssetInfo({ id: assetId });
+  }
+
+  async updateAssetDescription(
+    assetId: string,
+    description: string,
+    apiKey: string,
+  ): Promise<void> {
+    await updateAsset(
+      { id: assetId, updateAssetDto: { description } },
+      withApiKey(apiKey),
+    );
   }
 
   async getAssetThumbnail(assetId: string): Promise<Buffer> {

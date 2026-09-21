@@ -12,7 +12,7 @@ export function RefreshButton() {
   async function handleClick() {
     setIsRefreshing(true);
     try {
-      await fetch("/api/refresh", { method: "POST" });
+      await fetch("/api/admin/refresh", { method: "POST" });
       startTransition(() => router.refresh());
     } finally {
       setIsRefreshing(false);
