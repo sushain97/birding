@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (process.env.NODE_ENV === "development") return NextResponse.next();
 
   if (request.headers.get("x-birding-admin") !== "1") {

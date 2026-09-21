@@ -92,6 +92,8 @@ export function DescriptionSyncForm({
           placeholder="Pick dates range"
           value={[startDate, endDate]}
           onChange={setRange}
+          maxDate={today()}
+          weekendDays={[]}
           allowSingleDateInRange
         />
         <Button
@@ -99,12 +101,12 @@ export function DescriptionSyncForm({
           disabled={!startDate || !endDate}
           onClick={() => void handleRun()}
         >
-          {dryRun ? "Preview" : "Update descriptions"}
+          {dryRun ? "Preview" : "Update"}
         </Button>
       </Group>
       <Group gap="lg">
         <Checkbox
-          label="Overwrite existing descriptions"
+          label="Overwrite existing"
           checked={overwriteExisting}
           onChange={(e) => setOverwriteExisting(e.currentTarget.checked)}
         />
