@@ -3,11 +3,12 @@ import path from "node:path";
 import {
   AssetMediaSize,
   type AssetResponseDto,
+  addAssetsToAlbum,
   getAlbumInfo,
   getAssetInfo,
-  getTimeBucket,
-  getTimeBuckets,
   init,
+  removeAssetFromAlbum,
+  searchAssets,
   updateAsset,
   viewAsset,
 } from "@immich/sdk";
@@ -16,13 +17,29 @@ import Config from "@/lib/config";
 init({ baseUrl: `${Config.immichBaseUrl}/api`, apiKey: Config.immichApiKey });
 
 const TAG_CACHE_DIR = path.join(Config.cacheDir, "immich-tags");
+const STACK_CACHE_DIR = path.join(Config.cacheDir, "immich-stacks");
 
 export interface AlbumAsset {
   id: string;
+  fileName: string;
   fileCreatedAt: string;
+  dateTimeOriginal?: string;
+  updatedAt: string;
   ownerId: string;
   owner: string;
 }
+
+export interface AssetStack {
+  id: string;
+  assetCount: number;
+}
+
+interface CachedStack {
+  updatedAt: string;
+  stack: AssetStack | null;
+}
+
+const SEARCH_PAGE_SIZE = 1000;
 
 function withApiKey(apiKey: string) {
   return { headers: { "x-api-key": apiKey } };
@@ -35,42 +52,74 @@ class ImmichClient {
       album.albumUsers.map((entry) => [entry.user.id, entry.user.name]),
     );
 
-    const buckets = await getTimeBuckets({ albumId, isTrashed: false });
-
     const assets: AlbumAsset[] = [];
-    for (const { timeBucket } of buckets) {
-      const bucket = await getTimeBucket({
-        albumId,
-        timeBucket,
-        isTrashed: false,
+    for (let page = 1; ; page++) {
+      const { assets: results } = await searchAssets({
+        metadataSearchDto: {
+          albumIds: [albumId],
+          page,
+          size: SEARCH_PAGE_SIZE,
+          withExif: true,
+        },
       });
-      for (let i = 0; i < bucket.id.length; i++) {
+
+      for (const asset of results.items) {
         assets.push({
-          id: bucket.id[i],
-          fileCreatedAt: bucket.fileCreatedAt[i],
-          ownerId: bucket.ownerId[i],
-          owner: ownerById.get(bucket.ownerId[i]) ?? bucket.ownerId[i],
+          id: asset.id,
+          fileName: asset.originalFileName,
+          fileCreatedAt: asset.fileCreatedAt,
+          dateTimeOriginal: asset.exifInfo?.dateTimeOriginal ?? undefined,
+          updatedAt: asset.updatedAt,
+          ownerId: asset.ownerId,
+          owner: ownerById.get(asset.ownerId) ?? asset.ownerId,
         });
       }
-    }
 
-    return assets;
+      if (!results.nextPage) return assets;
+    }
   }
 
-  /** Tags never expire once cached. */
   async getAssetTags(assetId: string): Promise<string[]> {
-    const cached = await this.readTagCache(assetId);
-    if (cached) return cached;
+    const cached = await this.readCache<string[]>(TAG_CACHE_DIR, assetId);
+    if (cached?.length) return cached;
 
     const asset = await getAssetInfo({ id: assetId });
     const tags = (asset.tags ?? []).map((tag) => tag.value);
+    if (tags.length === 0) return tags;
 
-    await this.writeTagCache(assetId, tags);
+    await this.writeCache(TAG_CACHE_DIR, assetId, tags);
     return tags;
+  }
+
+  async getAssetStack(asset: AlbumAsset): Promise<AssetStack | null> {
+    const cached = await this.readCache<CachedStack>(STACK_CACHE_DIR, asset.id);
+    if (cached?.updatedAt === asset.updatedAt) return cached.stack;
+
+    const detail = await getAssetInfo({ id: asset.id });
+    const stack = detail.stack ?? null;
+
+    await this.writeCache(STACK_CACHE_DIR, asset.id, {
+      updatedAt: asset.updatedAt,
+      stack,
+    } satisfies CachedStack);
+    return stack;
   }
 
   async getAsset(assetId: string): Promise<AssetResponseDto> {
     return await getAssetInfo({ id: assetId });
+  }
+
+  async addAssetsToAlbum(albumId: string, assetIds: string[]): Promise<void> {
+    if (assetIds.length === 0) return;
+    await addAssetsToAlbum({ id: albumId, bulkIdsDto: { ids: assetIds } });
+  }
+
+  async removeAssetsFromAlbum(
+    albumId: string,
+    assetIds: string[],
+  ): Promise<void> {
+    if (assetIds.length === 0) return;
+    await removeAssetFromAlbum({ id: albumId, bulkIdsDto: { ids: assetIds } });
   }
 
   async updateAssetDescription(
@@ -92,25 +141,22 @@ class ImmichClient {
     return Buffer.from(await blob.arrayBuffer());
   }
 
-  private async readTagCache(assetId: string): Promise<string[] | null> {
+  private async readCache<T>(dir: string, assetId: string): Promise<T | null> {
     try {
-      const raw = await readFile(
-        path.join(TAG_CACHE_DIR, `${assetId}.json`),
-        "utf-8",
-      );
-      const tags = JSON.parse(raw) as string[];
-      return tags.length > 0 ? tags : null;
+      const raw = await readFile(path.join(dir, `${assetId}.json`), "utf-8");
+      return JSON.parse(raw) as T;
     } catch {
       return null;
     }
   }
 
-  private async writeTagCache(assetId: string, tags: string[]): Promise<void> {
-    await mkdir(TAG_CACHE_DIR, { recursive: true });
-    await writeFile(
-      path.join(TAG_CACHE_DIR, `${assetId}.json`),
-      JSON.stringify(tags),
-    );
+  private async writeCache(
+    dir: string,
+    assetId: string,
+    value: unknown,
+  ): Promise<void> {
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, `${assetId}.json`), JSON.stringify(value));
   }
 }
 

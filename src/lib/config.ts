@@ -23,6 +23,7 @@ const config = {
   immichApiKey: process.env.IMMICH_API_KEY!,
   immichOwnerApiKeys: ownerApiKeys(),
   bestOfBirdingAlbumId: "c172ef8b-6f76-4abe-9ed5-cdd3292cc404",
+  birdingAlbumId: "fe02bfa3-f25a-43c2-b8ff-461d2849f09f",
   cacheDir: paths.cache,
 };
 
