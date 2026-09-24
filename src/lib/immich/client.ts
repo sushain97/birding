@@ -109,17 +109,28 @@ class ImmichClient {
     return await getAssetInfo({ id: assetId });
   }
 
-  async addAssetsToAlbum(albumId: string, assetIds: string[]): Promise<void> {
+  async addAssetsToAlbum(
+    albumId: string,
+    assetIds: string[],
+    apiKey: string,
+  ): Promise<void> {
     if (assetIds.length === 0) return;
-    await addAssetsToAlbum({ id: albumId, bulkIdsDto: { ids: assetIds } });
+    await addAssetsToAlbum(
+      { id: albumId, bulkIdsDto: { ids: assetIds } },
+      withApiKey(apiKey),
+    );
   }
 
   async removeAssetsFromAlbum(
     albumId: string,
     assetIds: string[],
+    apiKey: string,
   ): Promise<void> {
     if (assetIds.length === 0) return;
-    await removeAssetFromAlbum({ id: albumId, bulkIdsDto: { ids: assetIds } });
+    await removeAssetFromAlbum(
+      { id: albumId, bulkIdsDto: { ids: assetIds } },
+      withApiKey(apiKey),
+    );
   }
 
   async updateAssetDescription(

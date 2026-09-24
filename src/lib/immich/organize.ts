@@ -1,4 +1,6 @@
+import { groupBy } from "lodash-es";
 import { immichClient, type AlbumAsset } from "./client";
+import Config from "@/lib/config";
 
 const LOOKUP_CONCURRENCY = 8;
 
@@ -117,21 +119,36 @@ async function addMissingBestOfAssets(
   const birdingIds = new Set(birdingAssets.map((asset) => asset.id));
   const missing = bestOfAssets.filter((asset) => !birdingIds.has(asset.id));
 
-  if (missing.length === 0) return { assets: [], entries: [] };
+  const assets: AlbumAsset[] = [];
+  const entries: OrganizeEntry[] = [];
 
-  if (!options.dryRun) {
-    await immichClient.addAssetsToAlbum(
-      birdingAlbumId,
-      missing.map((asset) => asset.id),
+  for (const owned of Object.values(groupBy(missing, "ownerId"))) {
+    const apiKey = Config.immichOwnerApiKeys[owned[0].ownerId.toLowerCase()];
+    if (!options.dryRun) {
+      if (!apiKey) {
+        entries.push(
+          ...owned.map((asset) => entry(asset, "error", noKey(asset))),
+        );
+        continue;
+      }
+      await immichClient.addAssetsToAlbum(
+        birdingAlbumId,
+        owned.map((asset) => asset.id),
+        apiKey,
+      );
+    }
+
+    assets.push(...owned);
+    entries.push(
+      ...owned.map((asset) => entry(asset, "added", "Missing from Birding")),
     );
   }
 
-  return {
-    assets: missing,
-    entries: missing.map((asset) =>
-      entry(asset, "added", "Missing from Birding"),
-    ),
-  };
+  return { assets, entries };
+}
+
+function noKey(asset: AlbumAsset): string {
+  return `No IMMICH_API_KEY_<ownerId> set for ${asset.owner} (${asset.ownerId})`;
 }
 
 async function removeStackedOriginals(
@@ -188,7 +205,7 @@ async function removeStackedOriginals(
     await stackIdOf(original),
   ]);
 
-  const toRemove: string[] = [];
+  const stacked: typeof pairs = [];
   pairs.forEach(({ edited, original }, i) => {
     const [editedStackId, originalStackId] = stacks[i];
     if (!editedStackId || editedStackId !== originalStackId) {
@@ -197,15 +214,35 @@ async function removeStackedOriginals(
       );
       return;
     }
-
-    toRemove.push(original.id);
-    entries.push(
-      entry(original, "removed", `Keeping edited '${edited.fileName}'`),
-    );
+    stacked.push({ edited, original });
   });
 
-  if (!options.dryRun) {
-    await immichClient.removeAssetsFromAlbum(birdingAlbumId, toRemove);
+  for (const owned of Object.values(
+    groupBy(stacked, ({ original }) => original.ownerId),
+  )) {
+    const apiKey =
+      Config.immichOwnerApiKeys[owned[0].original.ownerId.toLowerCase()];
+    if (!options.dryRun) {
+      if (!apiKey) {
+        entries.push(
+          ...owned.map(({ original }) =>
+            entry(original, "error", noKey(original)),
+          ),
+        );
+        continue;
+      }
+      await immichClient.removeAssetsFromAlbum(
+        birdingAlbumId,
+        owned.map(({ original }) => original.id),
+        apiKey,
+      );
+    }
+
+    entries.push(
+      ...owned.map(({ edited, original }) =>
+        entry(original, "removed", `Keeping edited '${edited.fileName}'`),
+      ),
+    );
   }
 
   return entries;
