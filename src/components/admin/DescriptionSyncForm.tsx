@@ -199,7 +199,8 @@ function SyncEntries({
 
 function DescriptionCell({ entry }: { entry: DescriptionSyncEntry }) {
   const { description, previousDescription, message } = entry;
-  const replaces = description && previousDescription;
+  const replaces =
+    description && previousDescription && description !== previousDescription;
 
   return (
     <Stack gap={0}>
