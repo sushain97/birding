@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Divider, Stack } from "@mantine/core";
 import Config from "@/lib/config";
 import { DescriptionSyncForm } from "@/components/admin/DescriptionSyncForm";
+import { LocationEnrichForm } from "@/components/admin/LocationEnrichForm";
 import { OrganizeAlbumsForm } from "@/components/admin/OrganizeAlbumsForm";
 import { isAdminRequest } from "@/server/admin";
 
@@ -13,6 +14,8 @@ export default async function AdminPage() {
       <DescriptionSyncForm immichBaseUrl={Config.immichBaseUrl} />
       <Divider />
       <OrganizeAlbumsForm immichBaseUrl={Config.immichBaseUrl} />
+      <Divider />
+      <LocationEnrichForm immichBaseUrl={Config.immichBaseUrl} />
     </Stack>
   );
 }

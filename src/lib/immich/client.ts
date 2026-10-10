@@ -24,6 +24,8 @@ export interface AlbumAsset {
   fileName: string;
   fileCreatedAt: string;
   dateTimeOriginal?: string;
+  latitude?: number;
+  longitude?: number;
   updatedAt: string;
   ownerId: string;
   owner: string;
@@ -69,6 +71,8 @@ class ImmichClient {
           fileName: asset.originalFileName,
           fileCreatedAt: asset.fileCreatedAt,
           dateTimeOriginal: asset.exifInfo?.dateTimeOriginal ?? undefined,
+          latitude: asset.exifInfo?.latitude ?? undefined,
+          longitude: asset.exifInfo?.longitude ?? undefined,
           updatedAt: asset.updatedAt,
           ownerId: asset.ownerId,
           owner: ownerById.get(asset.ownerId) ?? asset.ownerId,
@@ -140,6 +144,18 @@ class ImmichClient {
   ): Promise<void> {
     await updateAsset(
       { id: assetId, updateAssetDto: { description } },
+      withApiKey(apiKey),
+    );
+  }
+
+  async updateAssetLocation(
+    assetId: string,
+    latitude: number,
+    longitude: number,
+    apiKey: string,
+  ): Promise<void> {
+    await updateAsset(
+      { id: assetId, updateAssetDto: { latitude, longitude } },
       withApiKey(apiKey),
     );
   }
