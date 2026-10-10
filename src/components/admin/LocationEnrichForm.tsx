@@ -346,12 +346,20 @@ function PreviewTable({
                   <Table.Td>{entry.owner}</Table.Td>
                   <Table.Td>
                     <Group gap="xs" wrap="nowrap">
-                      <Badge color={STATUS_COLORS[status]} variant="light">
+                      <Badge
+                        color={STATUS_COLORS[status]}
+                        variant="light"
+                        style={{ flexShrink: 0 }}
+                      >
                         {status}
                       </Badge>
                       {entry.deltaSeconds !== undefined &&
                         status === entry.method && (
-                          <Text size="sm" c="dimmed">
+                          <Text
+                            size="sm"
+                            c="dimmed"
+                            style={{ whiteSpace: "nowrap" }}
+                          >
                             ±{formatDelta(entry.deltaSeconds)}
                           </Text>
                         )}
@@ -377,17 +385,28 @@ function LocationCell({
   entry: LocationPreviewEntry;
   message?: string;
 }) {
-  const { current, proposed } = entry;
+  const { current, proposed, distanceMeters } = entry;
 
   return (
     <Stack gap={0}>
       {current && proposed ? (
-        <Text size="sm">
-          <Text span td="line-through" c="dimmed" inherit>
-            <MapLink coordinates={current} />
-          </Text>{" "}
-          → <MapLink coordinates={proposed} />
-        </Text>
+        <>
+          <Text size="sm">
+            <Text span td="line-through" c="dimmed" inherit>
+              <MapLink coordinates={current} />
+            </Text>{" "}
+            →
+          </Text>
+          <Text size="sm" style={{ whiteSpace: "nowrap" }}>
+            <MapLink coordinates={proposed} />
+            {distanceMeters !== undefined && (
+              <Text span c="dimmed" inherit>
+                {" "}
+                ({formatDistance(distanceMeters)})
+              </Text>
+            )}
+          </Text>
+        </>
       ) : (
         (proposed ?? current) && (
           <Text size="sm">
@@ -413,9 +432,18 @@ function MapLink({ coordinates }: { coordinates: Coordinates }) {
       target="_blank"
       inherit
     >
-      {latitude}, {longitude}
+      {coordinates.latitude.toFixed(3)}, {coordinates.longitude.toFixed(3)}
     </Anchor>
   );
+}
+
+const METERS_PER_FOOT = 0.3048;
+const FEET_PER_MILE = 5280;
+
+function formatDistance(meters: number): string {
+  const feet = meters / METERS_PER_FOOT;
+  if (feet >= FEET_PER_MILE) return `${(feet / FEET_PER_MILE).toFixed(1)} mi`;
+  return `${Math.round(feet).toLocaleString()} ft`;
 }
 
 function formatDelta(seconds: number): string {

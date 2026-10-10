@@ -35,6 +35,8 @@ export interface LocationPreviewEntry {
   method?: LocationMatchMethod;
   /** Seconds between the photo and the nearest point used. */
   deltaSeconds?: number;
+  /** Meters between the current and proposed locations. */
+  distanceMeters?: number;
   message?: string;
 }
 
@@ -193,10 +195,9 @@ export async function previewLocations(
     if (!result) return entry;
 
     const { latitude, longitude, deltaSeconds, method } = result;
-    if (
-      entry.current &&
-      distanceMeters(entry.current, { latitude, longitude }) < UNCHANGED_METERS
-    ) {
+    const distance =
+      entry.current && distanceMeters(entry.current, { latitude, longitude });
+    if (distance !== undefined && distance < UNCHANGED_METERS) {
       return { ...entry, status: "unchanged" };
     }
 
@@ -214,6 +215,7 @@ export async function previewLocations(
       proposed: { latitude, longitude },
       method,
       deltaSeconds,
+      distanceMeters: distance,
     };
   });
 
