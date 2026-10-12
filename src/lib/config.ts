@@ -26,6 +26,7 @@ const config = {
   birdingAlbumId: "fe02bfa3-f25a-43c2-b8ff-461d2849f09f",
   dawarichBaseUrl: process.env.DAWARICH_BASE_URL ?? "https://timeline.skc.name",
   dawarichApiKey: process.env.DAWARICH_API_KEY,
+  labradoriteAllowedCidr: process.env.LABRADORITE_ALLOWED_CIDR,
   cacheDir: paths.cache,
 };
 

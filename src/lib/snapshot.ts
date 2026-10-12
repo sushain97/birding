@@ -23,7 +23,10 @@ const OBSERVATIONS_PATH = path.join(
 );
 const BEST_OF_PATH = path.join(Config.cacheDir, "best-of-snapshot.json");
 
-async function writeJson(filePath: string, data: unknown): Promise<void> {
+export async function writeJson(
+  filePath: string,
+  data: unknown,
+): Promise<void> {
   await mkdir(path.dirname(filePath), { recursive: true });
   const tmpPath = `${filePath}.tmp`;
   await writeFile(tmpPath, superjson.stringify(data));
