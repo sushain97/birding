@@ -2,9 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Affix, Button, ThemeIcon, Tooltip } from "@mantine/core";
+import {
+  Affix,
+  Box,
+  Button,
+  Container,
+  ThemeIcon,
+  Tooltip,
+} from "@mantine/core";
 import { FastForwardIcon, WifiSlashIcon } from "@phosphor-icons/react";
 import type { CurrentTaxon } from "@/lib/labradorite";
+
+// Button height (sm) plus its bottom offset.
+const JUMP_BUTTON_SPACE = 36 + 16;
 
 function taxonHref(taxon: string): string {
   return `/labradorite?${new URLSearchParams({ taxon })}`;
@@ -67,20 +77,27 @@ export function LiveFollower({ displayedTaxon }: { displayedTaxon: string }) {
         </Affix>
       )}
       {showJump && (
-        <Affix position={{ bottom: 16, left: 16, right: 16 }}>
-          <Button
-            fullWidth
-            size="sm"
-            radius="xl"
-            variant="default"
-            leftSection={<FastForwardIcon size={18} />}
-            onClick={() => {
-              setFollowing(true);
-              router.push(taxonHref(liveTaxon));
-            }}
-          >
-            Jump to present
-          </Button>
+        // Room for the affixed button so it doesn't cover the end of the page.
+        <Box h={JUMP_BUTTON_SPACE} />
+      )}
+      {showJump && (
+        <Affix position={{ bottom: 16, left: 0, right: 0 }}>
+          {/* Match the page's container so the button lines up with its content. */}
+          <Container size="sm">
+            <Button
+              fullWidth
+              size="sm"
+              radius="xl"
+              variant="default"
+              leftSection={<FastForwardIcon size={18} />}
+              onClick={() => {
+                setFollowing(true);
+                router.push(taxonHref(liveTaxon));
+              }}
+            >
+              Jump to present
+            </Button>
+          </Container>
         </Affix>
       )}
     </>

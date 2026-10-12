@@ -59,8 +59,7 @@ export default async function LabradoritePage({
   if (!details) return <NoData displayedTaxon={taxon} />;
 
   return (
-    <Container size="sm" py="lg" pb={96}>
-      <LiveFollower displayedTaxon={taxon} />
+    <Container size="sm" py="lg">
       <Stack gap="md">
         {details.photo && (
           <Stack gap={4}>
@@ -156,6 +155,7 @@ export default async function LabradoritePage({
           Open on iNaturalist
         </Button>
       </Stack>
+      <LiveFollower displayedTaxon={taxon} />
     </Container>
   );
 }
