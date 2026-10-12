@@ -70,6 +70,7 @@ export default async function LabradoritePage({
                 alt={details.preferredCommonName ?? details.name}
                 radius="md"
                 fit="cover"
+                style={{ objectPosition: "top" }}
               />
             </AspectRatio>
             {details.photo.attribution && (
