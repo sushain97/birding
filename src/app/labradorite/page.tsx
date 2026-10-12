@@ -87,8 +87,8 @@ export default async function LabradoritePage({
         )}
 
         <Stack gap={4}>
-          <Group gap="xs" wrap="nowrap">
-            <Title order={1}>
+          <Group gap="xs" wrap="nowrap" py={4}>
+            <Title order={1} style={{ textBox: "trim-both cap alphabetic" }}>
               {details.preferredCommonName ?? details.name}
             </Title>
             {details.sound && <TaxonSoundButton sound={details.sound} />}
