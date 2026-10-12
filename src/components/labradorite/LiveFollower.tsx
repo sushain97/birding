@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Affix, Button, ThemeIcon, Tooltip } from "@mantine/core";
 import { FastForwardIcon, WifiSlashIcon } from "@phosphor-icons/react";
@@ -13,7 +13,9 @@ function taxonHref(taxon: string): string {
 export function LiveFollower({ displayedTaxon }: { displayedTaxon: string }) {
   const router = useRouter();
   const [liveTaxon, setLiveTaxon] = useState<string | null>(null);
-  const [following, setFollowing] = useState(true);
+  // Undecided until the first live message arrives.
+  const [following, setFollowing] = useState<boolean>();
+  const initialTaxon = useRef(displayedTaxon);
   const [disconnected, setDisconnected] = useState(false);
 
   useEffect(() => {
@@ -24,6 +26,15 @@ export function LiveFollower({ displayedTaxon }: { displayedTaxon: string }) {
       const current = JSON.parse(event.data) as CurrentTaxon;
       setDisconnected(false);
       setLiveTaxon(current.taxon);
+      // Only follow if the page opened on the live taxon (or on none), so a
+      // deliberately linked taxon isn't immediately replaced.
+      setFollowing(
+        (prev) =>
+          prev ??
+          (!initialTaxon.current ||
+            !current.taxon ||
+            current.taxon === initialTaxon.current),
+      );
     };
     return () => source.close();
   }, []);
@@ -41,7 +52,8 @@ export function LiveFollower({ displayedTaxon }: { displayedTaxon: string }) {
     }
   }, [following, liveTaxon, displayedTaxon, router]);
 
-  const showJump = !following && !!liveTaxon && liveTaxon !== displayedTaxon;
+  const showJump =
+    following === false && !!liveTaxon && liveTaxon !== displayedTaxon;
 
   return (
     <>

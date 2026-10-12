@@ -27,6 +27,7 @@ const config = {
   dawarichBaseUrl: process.env.DAWARICH_BASE_URL ?? "https://timeline.skc.name",
   dawarichApiKey: process.env.DAWARICH_API_KEY,
   labradoriteAllowedCidr: process.env.LABRADORITE_ALLOWED_CIDR,
+  xenoCantoApiKey: process.env.XENO_CANTO_API_KEY,
   cacheDir: paths.cache,
 };
 

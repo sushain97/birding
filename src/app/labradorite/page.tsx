@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
   Anchor,
+  AspectRatio,
   Badge,
   Breadcrumbs,
   Button,
@@ -14,6 +15,7 @@ import {
 } from "@mantine/core";
 import { LiveFollower } from "@/components/labradorite/LiveFollower";
 import { INaturalistIcon } from "@/components/labradorite/INaturalistIcon";
+import { TaxonSoundButton } from "@/components/labradorite/TaxonSoundButton";
 import { getCurrentTaxon, getTaxonDetails } from "@/lib/labradorite";
 import { taxonPageUrl } from "@/lib/charts/taxonLinks";
 
@@ -62,13 +64,14 @@ export default async function LabradoritePage({
       <Stack gap="md">
         {details.photo && (
           <Stack gap={4}>
-            <Image
-              src={details.photo.url}
-              alt={details.preferredCommonName ?? details.name}
-              radius="md"
-              mah="60vh"
-              fit="contain"
-            />
+            <AspectRatio ratio={4 / 3}>
+              <Image
+                src={details.photo.url}
+                alt={details.preferredCommonName ?? details.name}
+                radius="md"
+                fit="cover"
+              />
+            </AspectRatio>
             {details.photo.attribution && (
               <Text
                 size="xs"
@@ -83,16 +86,16 @@ export default async function LabradoritePage({
         )}
 
         <Stack gap={4}>
-          <Title order={1}>{details.preferredCommonName ?? details.name}</Title>
+          <Group gap="xs" wrap="nowrap">
+            <Title order={1}>
+              {details.preferredCommonName ?? details.name}
+            </Title>
+            {details.sound && <TaxonSoundButton sound={details.sound} />}
+          </Group>
           <Group gap="xs">
             <Text fs="italic" c="dimmed" size="lg">
               {details.name}
             </Text>
-            {details.rank && details.rank !== "species" && (
-              <Badge variant="light" color="gray">
-                {details.rank}
-              </Badge>
-            )}
             {details.conservationStatus && (
               <Badge
                 variant="light"
@@ -135,7 +138,7 @@ export default async function LabradoritePage({
             {details.wikipediaSummary}{" "}
             {details.wikipediaUrl && (
               <Anchor href={details.wikipediaUrl} target="_blank">
-                Read more
+                Read&nbsp;more
               </Anchor>
             )}
           </Text>

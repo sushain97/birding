@@ -7,6 +7,7 @@ import { taxonPageUrl } from "@/lib/charts/taxonLinks";
 import { inatClient } from "@/lib/inat/client";
 import type { components } from "@/lib/inat/schema";
 import { readBestOfSnapshot, writeJson } from "@/lib/snapshot";
+import { XenoCantoClient, type XenoCantoSound } from "@/lib/xeno-canto/client";
 
 const CURRENT_TAXON_PATH = path.join(
   Config.cacheDir,
@@ -83,16 +84,20 @@ export interface TaxonDetails {
   id: number;
   name: string;
   preferredCommonName?: string;
-  rank?: string;
   photo?: { url: string; attribution?: string };
   wikipediaSummary?: string;
   wikipediaUrl?: string;
   ancestors: TaxonAncestor[];
   conservationStatus?: { name: string; authority?: string; place?: string };
+  sound?: XenoCantoSound;
   inatUrl: string;
 }
 
 const LIFE_TAXON_ID = 48460;
+
+const xenoCanto = Config.xenoCantoApiKey
+  ? new XenoCantoClient(Config.xenoCantoApiKey)
+  : undefined;
 
 const detailsCache = new Map<string, Promise<TaxonDetails>>();
 
@@ -136,12 +141,20 @@ async function fetchTaxonDetails(name: string): Promise<TaxonDetails> {
   const photoUrl = photo?.medium_url ?? photo?.url;
   const status = taxon.conservation_status;
   const statusName = status?.status_name ?? status?.status;
+  const sound = xenoCanto
+    ? await xenoCanto.getSpeciesSound(taxon.name).catch((error: unknown) => {
+        console.error(
+          `Failed to load xeno-canto sound for ${taxon.name}`,
+          error,
+        );
+        return undefined;
+      })
+    : undefined;
 
   return {
     id: taxon.id,
     name: taxon.name,
     preferredCommonName: taxon.preferred_common_name,
-    rank: taxon.rank,
     photo: photoUrl
       ? {
           // medium_url is small; iNat serves larger sizes at the same path.
@@ -168,6 +181,7 @@ async function fetchTaxonDetails(name: string): Promise<TaxonDetails> {
           place: status?.place?.display_name,
         }
       : undefined,
+    sound,
     inatUrl: taxonPageUrl({ id: taxon.id, name: taxon.name }),
   };
 }
