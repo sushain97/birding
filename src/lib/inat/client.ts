@@ -56,6 +56,7 @@ class InatClient {
             per_page: String(perPage),
           },
         },
+        headers: { "Cache-Control": "no-cache" },
       }).then(({ data, error }) => {
         if (error) throw new Error(`Failed to fetch observations page ${page}`);
         return data;

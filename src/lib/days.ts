@@ -25,6 +25,8 @@ export const LABELED_DATES: Record<string, string> = {
   "2026-08-18": "🇪🇨 Sacha Kapok Tower",
   "2026-08-20": "🇪🇨 Mindo Cloud Forest",
   "2026-09-12": "🇺🇸 Marin + Albany",
+  "2026-10-16": "🇺🇸 San Diego",
+  "2026-10-17": "🇺🇸 Oceanside",
 };
 
 export function formatDate(date: string): string {
