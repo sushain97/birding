@@ -7,7 +7,7 @@ pnpm lint                     # ESLint
 pnpm format                   # Prettier
 pnpm typecheck                # TSC
 
-pnpm update:inat-spec         # re-fetch iNaturalist's OpenAPI spec into data/inat-swagger.json
+pnpm update:inat-spec         # re-fetch iNaturalist's OpenAPI specs into data/
 pnpm update:wingspan-data     # re-fetch the Wingspan card data into data/wingspan-*.json
 pnpm check-ebird <path.csv>   # diff an eBird export against iNaturalist observations
 ```

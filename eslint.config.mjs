@@ -45,8 +45,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Build-time generated file.
+    // Build-time generated files.
     "src/lib/inat/schema.d.ts",
+    "src/lib/inat/schema-v2.d.ts",
   ]),
 ]);
 

@@ -1,10 +1,66 @@
-import createClient from "openapi-fetch";
-import type { components, paths } from "./schema";
+import createClient, { type Middleware } from "openapi-fetch";
+import type { paths } from "./schema";
+import type { components as v2Components, paths as v2Paths } from "./schema-v2";
 
 const CHUNK_SIZE = 30;
 const PER_PAGE = 200;
 
-export type RawObservation = components["schemas"]["Observation"];
+type V2Observation = v2Components["schemas"]["Observation"];
+
+/** Which fields of `T` to request: `true` for a whole field, or a nested
+ * spec for an object field. */
+type FieldSpec<T> = {
+  [K in keyof T]?: NonNullable<T[K]> extends readonly unknown[]
+    ? true
+    : NonNullable<T[K]> extends object
+      ? FieldSpec<NonNullable<T[K]>>
+      : true;
+};
+
+/** Narrows `T` to the fields selected by spec `S`. */
+type PickFields<T, S> = {
+  [K in keyof Pick<T, keyof S & keyof T>]: S[K] extends true
+    ? T[K]
+    : PickFields<NonNullable<T[K]>, S[K]> | Extract<T[K], null | undefined>;
+};
+
+/** Flattens a field spec into iNat's `a,b.c` `fields` query syntax. */
+function fieldPaths(spec: object, prefix = ""): string[] {
+  return Object.entries(spec).flatMap(([key, value]) =>
+    value === true
+      ? [`${prefix}${key}`]
+      : fieldPaths(value as object, `${prefix}${key}.`),
+  );
+}
+
+const OBSERVATION_FIELDS = {
+  quality_grade: true,
+  observed_on: true,
+  place_ids: true,
+  taxon: {
+    id: true,
+    name: true,
+    rank: true,
+    iconic_taxon_name: true,
+    preferred_common_name: true,
+    ancestor_ids: true,
+    parent_id: true,
+  },
+} as const satisfies FieldSpec<V2Observation>;
+
+export type RawObservation = PickFields<
+  V2Observation,
+  typeof OBSERVATION_FIELDS
+>;
+
+const localeMiddleware: Middleware = {
+  onRequest: ({ request }) => {
+    const url = new URL(request.url);
+    url.searchParams.set("locale", "en");
+    url.searchParams.set("preferred_place_id", "1");
+    return new Request(url, request);
+  },
+};
 
 interface PageResponse<T> {
   results?: T[];
@@ -16,15 +72,13 @@ class InatClient {
     baseUrl: "https://api.inaturalist.org/v1",
   });
 
+  private readonly v2Client = createClient<v2Paths>({
+    baseUrl: "https://api.inaturalist.org/v2",
+  });
+
   constructor() {
-    this.client.use({
-      onRequest: ({ request }) => {
-        const url = new URL(request.url);
-        url.searchParams.set("locale", "en");
-        url.searchParams.set("preferred_place_id", "1");
-        return new Request(url, request);
-      },
-    });
+    this.client.use(localeMiddleware);
+    this.v2Client.use(localeMiddleware);
   }
 
   readonly GET = this.client.GET.bind(this.client);
@@ -48,19 +102,28 @@ class InatClient {
 
   async fetchAllObservations(userId: string): Promise<RawObservation[]> {
     return this.fetchAllPages<RawObservation>((page, perPage) =>
-      this.GET("/observations", {
-        params: {
-          query: {
-            user_id: [userId],
-            page: String(page),
-            per_page: String(perPage),
+      // Uses the v2 API so we can request only the fields we read (full v1
+      // pages are ~10MB each vs ~100KB).
+      this.v2Client
+        .GET("/observations", {
+          params: {
+            query: {
+              user_id: [userId],
+              page,
+              per_page: perPage,
+              fields: fieldPaths(OBSERVATION_FIELDS).join(","),
+            },
           },
-        },
-        headers: { "Cache-Control": "no-cache" },
-      }).then(({ data, error }) => {
-        if (error) throw new Error(`Failed to fetch observations page ${page}`);
-        return data;
-      }),
+          // Ensure manual refreshes return up-to-date observations since iNat's
+          // CDN caches responses for 5 minutes otherwise.
+          headers: { "Cache-Control": "no-cache" },
+        })
+        .then(({ data, error }) => {
+          if (error) {
+            throw new Error(`Failed to fetch observations ${page}`);
+          }
+          return data;
+        }),
     );
   }
 

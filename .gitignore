@@ -8,3 +8,4 @@ node_modules/
 next-env.d.ts
 .pnpm-debug.log*
 /src/lib/inat/schema.d.ts
+/src/lib/inat/schema-v2.d.ts

@@ -7,7 +7,7 @@
   },
   "packageManager": "pnpm@12.11.2",
   "scripts": {
-    "generate:inat-types": "swagger2openapi data/inat-swagger.json | openapi-typescript /dev/stdin -o src/lib/inat/schema.d.ts",
+    "generate:inat-types": "swagger2openapi data/inat-swagger.json | openapi-typescript /dev/stdin -o src/lib/inat/schema.d.ts && openapi-typescript data/inat-v2-openapi.json -o src/lib/inat/schema-v2.d.ts",
     "dev": "pnpm generate:inat-types && next dev -p 8501",
     "build": "pnpm generate:inat-types && next build",
     "start": "next start -p 8501",

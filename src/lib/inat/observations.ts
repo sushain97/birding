@@ -1,33 +1,33 @@
 import { sortBy, uniqBy } from "lodash-es";
 import { inatClient, type RawObservation } from "./client";
 
-type RawObservationTaxon = NonNullable<RawObservation["taxon"]> & {
-  /**
-   * `parent_id` is present on live API responses but missing from iNat's
-   * Swagger spec, so it isn't in the generated type.
-   */
-  parent_id?: number;
-};
+type RawObservationTaxon = NonNullable<RawObservation["taxon"]>;
+
+/** The v2 spec marks many fields nullable; we normalize null away. */
+type Present<T> = { [K in keyof T]-?: NonNullable<T[K]> };
+type Optional<T> = { [K in keyof T]?: NonNullable<T[K]> };
 
 /**
  * Trimmed to just the fields this app reads. Raw API responses balloon
  * memory usage. `preferred_common_name` is the only field iNat doesn't
  * always populate; everything else is validated in `trimObservation`.
  */
-export type ObservationTaxon = Required<
+export type ObservationTaxon = Present<
   Pick<RawObservationTaxon, "id" | "name" | "rank" | "iconic_taxon_name">
 > &
-  Pick<
-    RawObservationTaxon,
-    "preferred_common_name" | "ancestor_ids" | "parent_id"
+  Optional<
+    Pick<
+      RawObservationTaxon,
+      "preferred_common_name" | "ancestor_ids" | "parent_id"
+    >
   >;
 
-export type Observation = Required<
+export type Observation = Present<
   Pick<RawObservation, "quality_grade" | "observed_on" | "place_ids">
 > & { taxon: ObservationTaxon };
 
 function trimObservation(raw: RawObservation): Observation | undefined {
-  const t: RawObservationTaxon | undefined = raw.taxon;
+  const t = raw.taxon;
   if (
     !raw.quality_grade ||
     !raw.observed_on ||
@@ -49,9 +49,9 @@ function trimObservation(raw: RawObservation): Observation | undefined {
       name: t.name,
       rank: t.rank,
       iconic_taxon_name: t.iconic_taxon_name,
-      preferred_common_name: t.preferred_common_name,
+      preferred_common_name: t.preferred_common_name ?? undefined,
       ancestor_ids: t.ancestor_ids,
-      parent_id: t.parent_id,
+      parent_id: t.parent_id ?? undefined,
     },
   };
 }
