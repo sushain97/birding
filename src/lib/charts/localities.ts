@@ -9,7 +9,7 @@ import type { BarChartFigure } from "./types";
 import type { Observation, ObservationSummary } from "@/lib/inat/observations";
 import { paletteColor } from "@/components/charts/palette";
 
-function countryFlag(displayName: string): string {
+export function countryFlag(displayName: string): string {
   const code = displayName.split(",").pop()?.trim() ?? "";
   if (code.length === 2 && /^[A-Z]{2}$/.test(code)) {
     return Array.from(code)

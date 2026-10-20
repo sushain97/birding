@@ -150,13 +150,7 @@ export function BarChart({
       >
         <CartesianGrid horizontal={false} stroke={GRID_COLOR} />
 
-        <XAxis
-          type="number"
-          stroke={AXIS_COLOR}
-          tick={{ fill: AXIS_COLOR }}
-          tickLine={{ stroke: GRID_COLOR }}
-          axisLine={{ stroke: GRID_COLOR }}
-        >
+        <XAxis type="number" stroke={GRID_COLOR} tick={{ fill: AXIS_COLOR }}>
           {xLabel && (
             <Label
               value={xLabel}
@@ -171,7 +165,7 @@ export function BarChart({
           dataKey="category"
           width={yAxisWidth}
           reversed
-          stroke={AXIS_COLOR}
+          stroke={GRID_COLOR}
           tick={(props) => (
             <YAxisLinkedTick
               {...props}
@@ -179,8 +173,6 @@ export function BarChart({
               categoryLabelsByCategory={categoryLabelsByCategory}
             />
           )}
-          tickLine={{ stroke: GRID_COLOR }}
-          axisLine={{ stroke: GRID_COLOR }}
         />
 
         {series.length > 1 && (

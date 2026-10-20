@@ -3,6 +3,7 @@ import { LinkSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import styles from "./page.module.css";
 import { readObservationsSnapshot } from "@/lib/snapshot";
 import { buildLifetimeSpeciesFigure } from "@/lib/charts/lifetimeSpecies";
+import { buildSpeciesOverTimeFigure } from "@/lib/charts/speciesOverTime";
 import { buildTopDaysFigure } from "@/lib/charts/topDays";
 import { buildNewSpeciesDaysFigure } from "@/lib/charts/newSpeciesDays";
 import { buildLocalitiesFigure } from "@/lib/charts/localities";
@@ -10,6 +11,7 @@ import { buildMostSeenFigure } from "@/lib/charts/mostSeen";
 import { buildWingspanCoverageFigure } from "@/lib/charts/wingspanCoverage";
 import { needsIdByDayRows } from "@/lib/charts/needsIdByDay";
 import { BarChart } from "@/components/charts/BarChart";
+import { CumulativeSpeciesChart } from "@/components/charts/CumulativeSpeciesChart";
 import { BarChartWithSpeciesDialog } from "@/components/charts/BarChartWithSpeciesDialog";
 import { NeedsIdByDayList } from "@/components/NeedsIdByDayList";
 
@@ -72,6 +74,12 @@ export default async function InatPage() {
       <Section title="Lifetime species by iconic taxon">
         <BarChartWithSpeciesDialog
           figure={buildLifetimeSpeciesFigure(summary)}
+        />
+      </Section>
+
+      <Section title="Research grade species over time">
+        <CumulativeSpeciesChart
+          figure={buildSpeciesOverTimeFigure(summary, placeNames)}
         />
       </Section>
 
