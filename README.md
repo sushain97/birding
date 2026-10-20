@@ -9,5 +9,4 @@ pnpm typecheck                # TSC
 
 pnpm update:inat-spec         # re-fetch iNaturalist's OpenAPI specs into data/
 pnpm update:wingspan-data     # re-fetch the Wingspan card data into data/wingspan-*.json
-pnpm check-ebird <path.csv>   # diff an eBird export against iNaturalist observations
 ```

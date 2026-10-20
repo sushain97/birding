@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=24"
   },
-  "packageManager": "pnpm@12.11.2",
+  "packageManager": "pnpm@12.14.0",
   "scripts": {
     "generate:inat-types": "swagger2openapi data/inat-swagger.json | openapi-typescript /dev/stdin -o src/lib/inat/schema.d.ts && openapi-typescript data/inat-v2-openapi.json -o src/lib/inat/schema-v2.d.ts",
     "dev": "pnpm generate:inat-types && next dev -p 8501",
@@ -15,8 +15,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "update:inat-spec": "tsx scripts/update-inat-spec.ts",
-    "update:wingspan-data": "tsx scripts/update-wingspan-data.ts",
-    "check-ebird": "tsx scripts/check-ebird.ts"
+    "update:wingspan-data": "tsx scripts/update-wingspan-data.ts"
   },
   "dependencies": {
     "@immich/sdk": "^3.0.3",
@@ -25,6 +24,7 @@
     "@mantine/hooks": "^9.6.1",
     "@phosphor-icons/react": "^2.1.10",
     "country-flag-emoji-polyfill": "^0.1.10",
+    "csv-parse": "^7.0.2",
     "d3-geo": "^3.1.1",
     "dayjs": "^1.11.23",
     "env-paths": "^4.0.0",
@@ -43,7 +43,6 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "csv-parse": "^7.0.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "eslint-config-prettier": "^10.1.8",

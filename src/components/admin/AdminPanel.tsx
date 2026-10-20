@@ -3,12 +3,14 @@
 import { useSyncExternalStore } from "react";
 import { Box, Flex, NavLink, Stack } from "@mantine/core";
 import {
+  BinocularsIcon,
   MapPinIcon,
   StackIcon,
   TextAaIcon,
   type Icon,
 } from "@phosphor-icons/react";
 import { DescriptionSyncForm } from "./DescriptionSyncForm";
+import { EbirdCompareForm } from "./EbirdCompareForm";
 import { LocationEnrichForm } from "./LocationEnrichForm";
 import { OrganizeAlbumsForm } from "./OrganizeAlbumsForm";
 
@@ -33,6 +35,11 @@ const ADMIN_TOOLS = {
     label: "Enrich locations",
     icon: MapPinIcon,
     Component: LocationEnrichForm,
+  },
+  ebird: {
+    label: "Compare with eBird",
+    icon: BinocularsIcon,
+    Component: EbirdCompareForm,
   },
 } satisfies Record<string, AdminToolDefinition>;
 
