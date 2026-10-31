@@ -1,5 +1,6 @@
 import { immichClient } from "./client";
 import { BEST_OF_CLASSES, type BestOfClass } from "./best-of-classes";
+import { immichAlbumAssetUrl } from "./deep-link";
 import Config from "@/lib/config";
 import { inatClient } from "@/lib/inat/client";
 import type { ObservationSummary } from "@/lib/inat/observations";
@@ -84,17 +85,17 @@ export async function computeBestOfSummary(
       t.startsWith("Birding/"),
     );
     const created = asset.fileCreatedAt.split("T")[0];
-    const photoUrl = `${Config.immichBaseUrl}/photos/${asset.id}`;
+    const photoLink = `[photo](${immichAlbumAssetUrl(Config.immichBaseUrl, albumId, asset.id)})`;
 
     if (tags.length === 0) {
       warnings.push(
-        `[${asset.owner} / ${created}] no birding tags -> ${photoUrl}`,
+        `[${asset.owner} / ${created}] no birding tags -> ${photoLink}`,
       );
       continue;
     }
     if (tags.length > 1) {
       warnings.push(
-        `[${asset.owner} / ${created}] Multiple birding tags: ${tags.join(", ")} -> ${photoUrl}`,
+        `[${asset.owner} / ${created}] Multiple birding tags: ${tags.join(", ")} -> ${photoLink}`,
       );
       continue;
     }
@@ -102,7 +103,7 @@ export async function computeBestOfSummary(
     const [, name, klass] = tags[0].split("/");
     if (!BEST_OF_CLASSES.includes(klass as BestOfClass)) {
       warnings.push(
-        `[${asset.owner} / ${created}] Invalid class '${klass}' -> ${photoUrl}`,
+        `[${asset.owner} / ${created}] Invalid class '${klass}' -> ${photoLink}`,
       );
       continue;
     }

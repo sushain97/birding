@@ -25,9 +25,15 @@ export interface BestOfTableProps {
   rows: BestOfRow[];
   photos: Record<string, Partial<Record<BestOfClass, string[]>>>;
   immichBaseUrl: string;
+  albumId: string;
 }
 
-export function BestOfTable({ rows, photos, immichBaseUrl }: BestOfTableProps) {
+export function BestOfTable({
+  rows,
+  photos,
+  immichBaseUrl,
+  albumId,
+}: BestOfTableProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -144,6 +150,7 @@ export function BestOfTable({ rows, photos, immichBaseUrl }: BestOfTableProps) {
           name={selected.name}
           commonName={selected.commonName}
           immichBaseUrl={immichBaseUrl}
+          albumId={albumId}
           speciesPhotos={photos[selected.name] ?? {}}
         />
       )}

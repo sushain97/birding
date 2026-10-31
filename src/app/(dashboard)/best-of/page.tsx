@@ -1,6 +1,8 @@
 import { Suspense } from "react";
+import Markdown from "markdown-to-jsx/react";
 import {
   Accordion,
+  Anchor,
   AccordionControl,
   AccordionItem,
   AccordionPanel,
@@ -15,6 +17,11 @@ import { BestOfTable } from "@/components/best-of/BestOfTable";
 // Reads the on-disk snapshot the background scheduler keeps refreshing —
 // must never be statically prerendered at build time.
 export const dynamic = "force-dynamic";
+
+const WARNING_MARKDOWN_OPTIONS = {
+  forceInline: true,
+  overrides: { a: { component: Anchor, props: { target: "_blank" } } },
+};
 
 export default async function BestOfPage() {
   const bestOf = await readBestOfSnapshot();
@@ -33,7 +40,9 @@ export default async function BestOfPage() {
             <AccordionPanel>
               <ul>
                 {bestOf.warnings.map((w) => (
-                  <li key={w}>{w}</li>
+                  <li key={w}>
+                    <Markdown options={WARNING_MARKDOWN_OPTIONS}>{w}</Markdown>
+                  </li>
                 ))}
               </ul>
             </AccordionPanel>
@@ -45,6 +54,7 @@ export default async function BestOfPage() {
           rows={buildBestOfRows(bestOf)}
           photos={bestOf.photos}
           immichBaseUrl={Config.immichBaseUrl}
+          albumId={Config.bestOfBirdingAlbumId}
         />
       </Suspense>
     </Stack>

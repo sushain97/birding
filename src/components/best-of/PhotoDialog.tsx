@@ -14,7 +14,7 @@ import {
   BEST_OF_CLASSES,
   type BestOfClass,
 } from "@/lib/immich/best-of-classes";
-import { immichAssetHref } from "@/lib/immich/deep-link";
+import { immichAlbumAssetUrl, immichAssetHref } from "@/lib/immich/deep-link";
 
 const CLASS_LABELS: Partial<Record<BestOfClass, string>> = {
   Male: "Male (♂)",
@@ -54,6 +54,7 @@ export interface PhotoDialogProps {
   name: string;
   commonName: string;
   immichBaseUrl: string;
+  albumId: string;
   speciesPhotos: Partial<Record<BestOfClass, string[]>>;
 }
 
@@ -63,6 +64,7 @@ export function PhotoDialog({
   name,
   commonName,
   immichBaseUrl,
+  albumId,
   speciesPhotos,
 }: PhotoDialogProps) {
   const classesWithPhotos = BEST_OF_CLASSES.filter(
@@ -86,7 +88,7 @@ export function PhotoDialog({
                   key={assetId}
                   href={immichAssetHref(
                     assetId,
-                    `${immichBaseUrl}/photos/${assetId}`,
+                    immichAlbumAssetUrl(immichBaseUrl, albumId, assetId),
                   )}
                   target="_blank"
                 >

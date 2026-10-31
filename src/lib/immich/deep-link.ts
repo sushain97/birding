@@ -1,5 +1,13 @@
 const IMMICH_ANDROID_PACKAGE = "app.alextran.immich";
 
+export function immichAlbumAssetUrl(
+  baseUrl: string,
+  albumId: string,
+  assetId: string,
+): string {
+  return `${baseUrl}/albums/${albumId}/photos/${assetId}`;
+}
+
 function isAndroid(): boolean {
   return (
     typeof navigator !== "undefined" && /android/i.test(navigator.userAgent)
