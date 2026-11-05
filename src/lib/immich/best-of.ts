@@ -85,17 +85,17 @@ export async function computeBestOfSummary(
       t.startsWith("Birding/"),
     );
     const created = asset.fileCreatedAt.split("T")[0];
-    const photoLink = `[photo](${immichAlbumAssetUrl(Config.immichBaseUrl, albumId, asset.id)})`;
+    const photoLink = `[${asset.id}](${immichAlbumAssetUrl(Config.immichBaseUrl, albumId, asset.id)})`;
 
     if (tags.length === 0) {
       warnings.push(
-        `[${asset.owner} / ${created}] no birding tags -> ${photoLink}`,
+        `[${asset.owner} / ${created}] Missing birding tags → ${photoLink}`,
       );
       continue;
     }
     if (tags.length > 1) {
       warnings.push(
-        `[${asset.owner} / ${created}] Multiple birding tags: ${tags.join(", ")} -> ${photoLink}`,
+        `[${asset.owner} / ${created}] Multiple birding tags: ${tags.join(", ")} → ${photoLink}`,
       );
       continue;
     }
@@ -103,7 +103,7 @@ export async function computeBestOfSummary(
     const [, name, klass] = tags[0].split("/");
     if (!BEST_OF_CLASSES.includes(klass as BestOfClass)) {
       warnings.push(
-        `[${asset.owner} / ${created}] Invalid class '${klass}' -> ${photoLink}`,
+        `[${asset.owner} / ${created}] Invalid class '${klass}' → ${photoLink}`,
       );
       continue;
     }
